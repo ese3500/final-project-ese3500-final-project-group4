@@ -1,10 +1,10 @@
+//#include <wiringPi.h>
 #define F_CPU 16000000UL  // AVR clock frequency in Hz
 #define BAUD 9600         // USART baud rate
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
-#define PHOTO_PIN PB0 // pin for photo resistorrr
-
+#define PHOTO_PIN 0 // set GPIO pin 0 as PHOTO_PIN -- BCM GPIO pin 17
 
 void Initialize()
 {
