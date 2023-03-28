@@ -4,24 +4,25 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
-#define PHOTO_PIN 0 // set GPIO pin 0 as PHOTO_PIN -- BCM GPIO pin 17
+#define PHOTO_PIN PB0 // pin for photo resistorrr
+
+volatile uint16_t lightThreshold = 800;  // Set threshold value for photoresistor
 
 void Initialize()
 {
-// ENABLE GLOBAL INTERRUPTS
+    // ENABLE GLOBAL INTERRUPTS
     sei();
-    volatile uint16_t lightThreshold = 800;  // Set threshold value for photoresistor
-// SET PHOTO PIN AS INPUT
+
+    // SET PHOTO PIN AS INPUT
     DDRB &= ~(1 << PHOTO_PIN);
 
-// ENABLE PULL-UP RESISTOR ON PHOTO PIN
+    // ENABLE PULL-UP RESISTOR ON PHOTO PIN
     PORTB |= (1 << PHOTO_PIN);
 
-// ENABLE EXTERNAL INTERRUPT ON PHOTO PIN
+    // ENABLE EXTERNAL INTERRUPT ON PHOTO PIN
     PCICR |= (1 << PCIE0);
     PCMSK0 |= (1 << PCINT0);
-
-} //INITIALIZE
+}
 
 void USART_Init(void)
 {
@@ -43,19 +44,23 @@ void USART_Transmit(uint8_t data)
 }
 
 ISR(ADC_vect)
-        {
-                uint16_t adcResult = ADC;
-        if (adcResult > lightThreshold)
-        {
-            // Send signal to Python function to start running
-            USART_Transmit('1');
-        }
-        else
-        {
-            // Send signal to Python function to stop running
-            USART_Transmit('0');
-        }
-        }
+{
+    uint16_t adcResult = ADC;
+    if (UCSR0A & (1 << UDRE0)) {
+        USART_Transmit(adcResult >> 8);
+        USART_Transmit(adcResult);
+    }
+    if (adcResult > lightThreshold)
+    {
+        // Send signal to Python function to start running
+        USART_Transmit('1');
+    }
+    else
+    {
+        // Send signal to Python function to stop running
+        USART_Transmit('0');
+    }
+}
 
 int main(void)
 {
@@ -76,3 +81,4 @@ int main(void)
         // Do other stuff here if needed
     }
 }
+
