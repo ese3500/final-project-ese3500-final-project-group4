@@ -1,5 +1,0 @@
-/Users/mherbert/Desktop/ESE350FINAL-repo/cmake-build-debug-mingw-arm/CMakeFiles/Production.dir
-/Users/mherbert/Desktop/ESE350FINAL-repo/cmake-build-debug-mingw-arm/CMakeFiles/Debug.dir
-/Users/mherbert/Desktop/ESE350FINAL-repo/cmake-build-debug-mingw-arm/CMakeFiles/Z_DUMMY_TARGET.dir
-/Users/mherbert/Desktop/ESE350FINAL-repo/cmake-build-debug-mingw-arm/CMakeFiles/edit_cache.dir
-/Users/mherbert/Desktop/ESE350FINAL-repo/cmake-build-debug-mingw-arm/CMakeFiles/rebuild_cache.dir
