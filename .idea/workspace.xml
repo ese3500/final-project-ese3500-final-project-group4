@@ -23,11 +23,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="685ea765-7ea0-4586-af41-416bea33a6a6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/communication.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/photoresistor_copy.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-uno/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-uno/.ninja_log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-uno/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-uno/Testing/Temporary/LastTest.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/communication.c" beforeDir="false" afterPath="$PROJECT_DIR$/test/communication.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/photoresistor.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/photoresistor.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/rpi_interrupt.c" beforeDir="false" afterPath="$PROJECT_DIR$/test/rpi_interrupt.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/speaker.c" beforeDir="false" afterPath="$PROJECT_DIR$/test/speaker.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,8 +79,8 @@
       <recent name="$PROJECT_DIR$/src" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src" />
       <recent name="$PROJECT_DIR$/test" />
+      <recent name="$PROJECT_DIR$/src" />
     </key>
   </component>
   <component name="RunManager" selected="PlatformIO.PlatformIO Upload">
@@ -116,7 +119,10 @@
       <workItem from="1680033676642" duration="751000" />
       <workItem from="1680143303086" duration="1403000" />
       <workItem from="1680146229901" duration="762000" />
-      <workItem from="1680149978652" duration="803000" />
+      <workItem from="1680149978652" duration="845000" />
+      <workItem from="1680216221953" duration="736000" />
+      <workItem from="1680217589175" duration="82000" />
+      <workItem from="1680217675575" duration="368000" />
     </task>
     <servers />
   </component>
