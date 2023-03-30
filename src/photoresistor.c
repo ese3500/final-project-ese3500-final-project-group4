@@ -5,80 +5,79 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #define PHOTO_PIN PB0 // pin for photo resistorrr
+#include <stdio.h>
+#include "../src/uart.c"
 
-volatile uint16_t lightThreshold = 800;  // Set threshold value for photoresistor
+// Define the analog input pin for the LDR
+#define LDR_PIN 0
 
-void Initialize()
-{
-    // ENABLE GLOBAL INTERRUPTS
+// Define the threshold value for triggering the interrupt
+#define LDR_THRESHOLD 512
+
+// Flag variable for indicating when the interrupt has been triggered
+
+#define F_CPU 16000000UL
+#define BAUD_RATE 9600
+#define BAUD_PRESCALER (((F_CPU / (BAUD_RATE * 16UL))) - 1)
+
+char String[25];
+int state = 0;
+int main(void) {
+    cli();
+    /*ADMUX |= (1 << REFS0); // ref voltage to AVCC
+    ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); //128 pres
+    ADCSRA |= (1 << ADEN); // enable the ADC
+    ADCSRA |= (1 << ADIE);*/
+
+    /*ADCSRA |= (1 << ADIE); // Enable ADC interrupt
+    ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); // Set ADC prescaler to 128
+    ADMUX |= (1 << REFS0); // Set ADC reference voltage to AVCC
+    DIDR0 |= (1 << LDR_PIN); // Disable digital input buffer for the LDR pin
+    ADCSRA |= (1 << ADEN); // Enable ADC*/
+    ADCSRA |= (1 << ADIE); // Enable ADC interrupt
+    ADMUX |= (1 << REFS0); // Set ADC reference voltage to AVCC
+    //DIDR0 |= (1 << LDR_PIN); // Disable digital input buffer for the LDR pin
+    ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+
+    ADCSRA |= (1 << ADEN); // Enable ADC
+    ADCSRA |= (1 << ADSC);
+    UART_init(BAUD_PRESCALER);
     sei();
 
-    // SET PHOTO PIN AS INPUT
-    DDRB &= ~(1 << PHOTO_PIN);
 
-    // ENABLE PULL-UP RESISTOR ON PHOTO PIN
-    PORTB |= (1 << PHOTO_PIN);
+    // Enable global interrupts
 
-    // ENABLE EXTERNAL INTERRUPT ON PHOTO PIN
-    PCICR |= (1 << PCIE0);
-    PCMSK0 |= (1 << PCINT0);
-}
+    while (1) {
+        /*ADCSRA |= (1 << ADSC); // start  conversion
+        while (ADCSRA & (1 << ADSC));
+        uint16_t adc = ADC;*/
 
-void USART_Init(void)
-{
-    // Set baud rate
-    UBRR0H = (uint8_t)(F_CPU / 16 / BAUD - 1) >> 8;
-    UBRR0L = (uint8_t)(F_CPU / 16 / BAUD - 1);
-    // Enable receiver and transmitter
-    UCSR0B = (1 << RXEN0) | (1 << TXEN0);
-    // Set frame format: 8 data, 1 stop bit
-    UCSR0C = (0 << USBS0) | (1 << UCSZ00) | (1 << UCSZ01);
-}
-
-void USART_Transmit(uint8_t data)
-{
-    // Wait for empty transmit buffer
-    while (!(UCSR0A & (1 << UDRE0)));
-    // Put data into buffer, sends the data
-    UDR0 = data;
-}
-
-ISR(ADC_vect)
-{
-    uint16_t adcResult = ADC;
-    if (UCSR0A & (1 << UDRE0)) {
-        USART_Transmit(adcResult >> 8);
-        USART_Transmit(adcResult);
     }
-    if (adcResult > lightThreshold)
-    {
-        // Send signal to Python function to start running
-        USART_Transmit('1');
-    }
-    else
-    {
-        // Send signal to Python function to stop running
-        USART_Transmit('0');
-    }
+
+    return 0;
 }
 
-int main(void)
-{
-    Initialize();
-    // Initialize USART communication
-    USART_Init();
+ISR(ADC_vect) {
+    // Read the digital value of the LDR
+    uint16_t ldr_value = ADC;
+    //sprintf (String, "ADC: %d\n", ADC);
+    //UART_putstring(String);
 
-    // Set up ADC for photoresistor reading
-    ADMUX = (0 << REFS1) | (1 << REFS0);  // Use AVcc as voltage reference
-    ADCSRA = (1 << ADEN) | (1 << ADIE) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);  // Enable ADC, set ADC interrupt, and set prescaler to 128
+    // Check if the LDR value is below the threshold
+    if (ldr_value < LDR_THRESHOLD) {
+        // Set the flag variable to indicate that the interrupt has been triggered
+        if (state==0){
+            state = 1;
+            sprintf (String, "Fridge is Closed!\n");
+            UART_putstring(String);
+        }
 
-    // Set up interrupt for photoresistor reading
-    sei();  // Enable global interrupts
-    ADCSRA |= (1 << ADSC);  // Start first ADC conversion
-
-    while (1)
-    {
-        // Do other stuff here if needed
+    }else{
+        if (state==1){
+            state = 0;
+            sprintf (String, "Fridge is Open\n");
+            UART_putstring(String);
+        }
     }
+    ADCSRA |= (1 << ADSC);
 }
-
