@@ -24,15 +24,8 @@
   <component name="ChangeListManager">
     <list default="true" id="685ea765-7ea0-4586-af41-416bea33a6a6" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-uno/.cmake/api/v1/reply/cmakeFiles-v1-d2da56cca2873f369ba7.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-uno/.cmake/api/v1/reply/codemodel-v2-fee4b79837b1fb8bbf77.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-uno/.cmake/api/v1/reply/index-2023-03-28T19-35-47-0542.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-uno/.cmake/api/v1/reply/target-Z_DUMMY_TARGET-uno-3d7e845c9774c405bccc.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-uno/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-uno/.ninja_log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-uno/CMakeFiles/CMakeError.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-uno/CMakeFiles/CMakeError.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-uno/CMakeFiles/clion-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-uno/CMakeFiles/clion-log.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-uno/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-uno/Testing/Temporary/LastTest.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-uno/build.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-uno/build.ninja" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -136,6 +129,10 @@
       <workItem from="1680567316346" duration="768000" />
       <workItem from="1680568087490" duration="453000" />
       <workItem from="1680568544753" duration="822000" />
+      <workItem from="1680571558041" duration="233000" />
+      <workItem from="1680572923561" duration="325000" />
+      <workItem from="1680573295978" duration="67000" />
+      <workItem from="1680573366860" duration="649000" />
     </task>
     <servers />
   </component>
