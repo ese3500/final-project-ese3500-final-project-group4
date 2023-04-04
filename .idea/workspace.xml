@@ -24,8 +24,15 @@
   <component name="ChangeListManager">
     <list default="true" id="685ea765-7ea0-4586-af41-416bea33a6a6" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-uno/.cmake/api/v1/reply/cmakeFiles-v1-d2da56cca2873f369ba7.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-uno/.cmake/api/v1/reply/codemodel-v2-fee4b79837b1fb8bbf77.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-uno/.cmake/api/v1/reply/index-2023-03-28T19-35-47-0542.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-uno/.cmake/api/v1/reply/target-Z_DUMMY_TARGET-uno-3d7e845c9774c405bccc.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-uno/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-uno/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-uno/CMakeFiles/CMakeError.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-uno/CMakeFiles/CMakeError.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-uno/CMakeFiles/clion-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-uno/CMakeFiles/clion-log.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-uno/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-uno/Testing/Temporary/LastTest.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-uno/build.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-uno/build.ninja" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -49,6 +56,7 @@
     <option name="minorVersion" value="2.4" />
   </component>
   <component name="ProjectId" id="2Nekm95wkNhyUjnfDC4AxehtEA8" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -122,6 +130,12 @@
       <workItem from="1680221308805" duration="179000" />
       <workItem from="1680221489957" duration="69000" />
       <workItem from="1680221564576" duration="32000" />
+      <workItem from="1680561519666" duration="1000" />
+      <workItem from="1680562018254" duration="709000" />
+      <workItem from="1680566443555" duration="783000" />
+      <workItem from="1680567316346" duration="768000" />
+      <workItem from="1680568087490" duration="453000" />
+      <workItem from="1680568544753" duration="822000" />
     </task>
     <servers />
   </component>

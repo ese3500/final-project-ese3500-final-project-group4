@@ -27,6 +27,7 @@ void init_PWM(void) {
 void init_ADC(void) {
     ADCSRA |= (1 << ADIE); // Enable ADC interrupt
     ADMUX |= (1 << REFS0); // Set ADC reference voltage to AVCC
+    ADMUX |= (1 << LDR_PIN); // Set ADC input to LDR pin
     ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); // Set ADC prescaler to 128
     DIDR0 |= (1 << LDR_PIN); // Disable digital input buffer for the LDR pin
     ADCSRA |= (1 << ADEN); // Enable ADC
@@ -59,38 +60,42 @@ void send_fridge_state(int state) {
         send_string("Fridge is closed.\n");
     }
 }
+
+ISR(ADC_vect) {
+    uint16_t ldr_value = ADC; // Read the digital value of the LDR
+    send_LDR_value(ldr_value);
+    if (ldr_value < LDR_THRESHOLD) { // Check if the LDR value is below the threshold
+        if (state == 0) { // If the fridge was previously open
+            send_string("Fridge is closed.\n");
+            state = 1;
+        }
+    } else { // If the LDR value is above the threshold
+        if (state == 1) { // If the fridge was previously closed
+            send_string("Fridge is open.\n");
+            state = 0;
+        }
+    }
+}
+
+ISR(INT0_vect) {
+    if (state == 0) {
+        send_fridge_state(0); // Send message indicating that the fridge is open
+    } else {
+        send_fridge_state(1); // Send message indicating that the fridge is closed
+    }
+}
+
 int main(void) {
     init_PWM();
     init_ADC();
     init_USART();
     sei(); // Enable global interrupts
-
+    DDRB &= ~(1 << PHOTO_PIN); // set photoresistor pin as input
+    PORTB |= (1 << PHOTO_PIN); // enable pull-up resistor
+    EICRA |= (1 << ISC01); // set INT0 to trigger on falling edge
+    EIMSK |= (1 << INT0); // enable INT0
     while (1) {
-        // Check the status of the fridge door
-        if (state == 0) {
-            send_fridge_state(0); // Send message indicating that the fridge is open
-        } else {
-            send_fridge_state(1); // Send message indicating that the fridge is closed
-        }
-
-        // Wait for 5 seconds
-        _delay_ms(5000);
+// Wait for interrupts
     }
-
     return 0;
-}
-ISR(ADC_vect) {
-        uint16_t ldr_value = ADC; // Read the digital value of the LDR
-        send_LDR_value(ldr_value);
-        if (ldr_value < LDR_THRESHOLD) { // Check if the LDR value is below the threshold
-            if (state == 0) { // If the fridge was previously open
-                send_string("Fridge is closed.\n");
-                state = 1;
-            }
-        } else { // If the LDR value is above the threshold
-            if (state == 1) { // If the fridge was previously closed
-                send_string("Fridge is open.\n");
-                state = 0;
-            }
-        }
 }
