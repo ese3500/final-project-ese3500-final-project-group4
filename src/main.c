@@ -1,120 +1,94 @@
 #include <avr/io.h>
-#include <avr/interrupt.h>
+#include <util/twi.h>
 #include <util/delay.h>
+#include "uart.c"
+#include "uart.h"
 #include <stdio.h>
 
 #define F_CPU 16000000UL
 #define BAUD_RATE 9600
-#define BAUD 9600
 #define BAUD_PRESCALER (((F_CPU / (BAUD_RATE * 16UL))) - 1)
 #define MYUBRR F_CPU/16/BAUD-1
+#define BAUD 9600
 
-#define PHOTO_PIN PB0 // pin for photoresistor
+#define TWI_START ((1<<TWINT)|(1<<TWSTA)|(1<<TWEN))
+#define TWI_STOP ((1<<TWINT)|(1<<TWSTO)|(1<<TWEN))
+#define TWI_WAIT while (!(TWCR & (1<<TWINT)))
+#define TWI_FREQ 100000L  // Set I2C frequency to 100 kHz
 
-#define SPEAKER_PIN PD3 // pin for the speaker
-#define SPEAKER_VOLUME 255 // speaker volume
+#define DS1307_ADDR 0xD0
 
-#define LDR_PIN 0 // pin for the LDR
-#define LDR_THRESHOLD 512 // threshold for triggering the interrupt
+void uart_init(unsigned int ubrr);
 
-char String[25];
-int state = 0;
-
-void init_PWM(void) {
-    DDRD |= (1 << SPEAKER_PIN); // set speaker pin as output
-    TCCR2A |= (1 << COM2B1) | (1 << WGM21) | (1 << WGM20); // set non-inverting mode and fast PWM
-    TCCR2B |= (1 << CS22); // set prescaler to 64
+uint8_t twi_start() {
+    TWCR = TWI_START;
+    TWI_WAIT;
+    return TW_STATUS;
 }
 
-void init_ADC(void) {
-    ADCSRA |= (1 << ADIE); // Enable ADC interrupt
-    ADMUX |= (1 << REFS0); // Set ADC reference voltage to AVCC
-    ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
-    ADCSRA |= (1 << ADEN); // Enable ADC
-    ADCSRA |= (1 << ADSC);
+uint8_t twi_stop() {
+    TWCR = TWI_STOP;
+    return TW_STATUS;
 }
 
-void init_USART(void) {
-    UBRR0H = (unsigned char)(BAUD_PRESCALER >> 8);
-    UBRR0L = (unsigned char)BAUD_PRESCALER;
-    UCSR0B = (1 << RXEN0) | (1 << TXEN0);
-    UCSR0C = (3 << UCSZ00);
+uint8_t twi_write(uint8_t data) {
+    TWDR = data;
+    TWCR = (1<<TWINT) | (1<<TWEN);
+    TWI_WAIT;
+    return TW_STATUS;
 }
 
-void send_string(char* str) {
-    while (*str != '\0') {
-        while (!(UCSR0A & (1 << UDRE0)));
-        UDR0 = *str++;
-    }
+uint8_t twi_read_ack() {
+    TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWEA);
+    TWI_WAIT;
+    return TWDR;
 }
 
-void send_LDR_value(uint16_t value) {
-    sprintf(String, "LDR value: %d\n", value);
-    send_string(String);
+uint8_t twi_read_nack() {
+    TWCR = (1<<TWINT) | (1<<TWEN);
+    TWI_WAIT;
+    return TWDR;
 }
 
-ISR(ADC_vect) {
-    uint16_t ldr_value = ADC; // Read the digital value of the LDR
-    //send_LDR_value(ldr_value);
-    if (ldr_value < LDR_THRESHOLD) { // Check if the LDR value is below the threshold
-        if (state == 0) { // If the fridge was previously open
-            send_string("Fridge is closed.\n");
-            state = 1;
-        }
-    } else { // If the LDR value is above the threshold
-        if (state == 1) { // If the fridge was previously closed
-            send_string("Fridge is open.\n");
-            state = 0;
-        }
-    }
-    ADCSRA |= (1 << ADSC);
+void twi_init() {
+    TWSR = 0;
+    TWBR = ((F_CPU / TWI_FREQ) - 16) / 2;
 }
 
-void USART_Init(unsigned int ubrr) {
-    /* Set baud rate */
-    UBRR0H = (unsigned char)(ubrr >> 8);
-    UBRR0L = (unsigned char)ubrr;
-    /* Enable receiver and transmitter */
-    UCSR0B = (1 << RXEN0) | (1 << TXEN0);
-    /* Set frame format: 8 data, 1 stop bit */
-    UCSR0C = (3 << UCSZ00);
+void ds1307_set_time(uint8_t hour, uint8_t minute, uint8_t second) {
+    twi_start();
+    twi_write(DS1307_ADDR);
+    twi_write(0x00); // set register pointer to 0x00
+    twi_write(second);
+    twi_write(minute);
+    twi_write(hour);
+    twi_stop();
 }
 
-void USART_Transmit(unsigned char data) {
-    /* Wait for empty transmit buffer */
-    while (!(UCSR0A & (1 << UDRE0)))
-        ;
-    /* Put data into buffer, sends the data */
-    UDR0 = data;
+void ds1307_read_time(uint8_t* hour, uint8_t* minute, uint8_t* second) {
+    twi_start();
+    twi_write(DS1307_ADDR);
+    twi_write(0x00); // set register pointer to 0x00
+    twi_stop();
+    twi_start();
+    twi_write(DS1307_ADDR | 1); // read mode
+    *second = twi_read_ack();
+    *minute = twi_read_ack();
+    *hour = twi_read_nack();
+    twi_stop();
 }
 
-
-int main(void) {
-    cli();
-    init_PWM();
-    init_ADC();
-    init_USART();
-    sei(); // Enable global interrupts
-    DDRB &= ~(1 << PHOTO_PIN); // set photoresistor pin as input
-    PORTB |= (1 << PHOTO_PIN); // enable pull-up resistor
-    EICRA |= (1 << ISC01); // set INT0 to trigger on falling edge
-    EIMSK |= (1 << INT0); // enable INT0
-
-    USART_Init(MYUBRR);
-
+int main() {
+    uart_init(MYUBRR);
+    twi_init();
+    ds1307_set_time(12, 30, 0);
     while (1) {
-        USART_Transmit('H');
-        USART_Transmit('e');
-        USART_Transmit('l');
-        USART_Transmit('l');
-        USART_Transmit('o');
-        USART_Transmit('\r');  // Carriage return
-        USART_Transmit('\n');  // New line
-        _delay_ms(2000);       // Wait for 2 seconds
-    }
-    while (1) {
-        // Wait for interrupts
+        uint8_t hour, minute, second;
+        ds1307_read_time(&hour, &minute, &second);
+        char buf[16];
+        sprintf(buf, "%02d:%02d:%02d\r\n", hour, minute, second);
+        UART_putstring(buf);
+        _delay_ms(1000);
     }
     return 0;
 }
-
