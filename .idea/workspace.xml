@@ -23,11 +23,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="685ea765-7ea0-4586-af41-416bea33a6a6" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/include/uart.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clock.c" beforeDir="false" afterPath="$PROJECT_DIR$/clock.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-uno/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-uno/.ninja_log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-uno/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-uno/Testing/Temporary/LastTest.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/uart.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/uart.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/uart.h" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,6 +78,8 @@
       <recent name="$PROJECT_DIR$/src" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/include" />
+      <recent name="$PROJECT_DIR$/lib" />
       <recent name="$PROJECT_DIR$/test" />
       <recent name="$PROJECT_DIR$/src" />
     </key>
@@ -135,6 +138,7 @@
       <workItem from="1680573295978" duration="67000" />
       <workItem from="1680573366860" duration="650000" />
       <workItem from="1680725860823" duration="2666000" />
+      <workItem from="1680749587565" duration="1543000" />
     </task>
     <servers />
   </component>

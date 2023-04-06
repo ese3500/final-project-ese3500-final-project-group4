@@ -1,8 +1,6 @@
 #include "uart.h"
 #include "../../../.platformio/packages/toolchain-atmelavr/avr/include/avr/io.h"
 
-
-
 void UART_init(int BAUD_PRESCALER)
 {
   

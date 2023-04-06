@@ -4,12 +4,8 @@
 #include "uart.c"
 #include "uart.h"
 #include <stdio.h>
-
-#define F_CPU 16000000UL
-#define BAUD_RATE 9600
-#define BAUD_PRESCALER (((F_CPU / (BAUD_RATE * 16UL))) - 1)
-#define MYUBRR F_CPU/16/BAUD-1
 #define BAUD 9600
+#define MYUBRR F_CPU/16/BAUD-1
 
 #define TWI_START ((1<<TWINT)|(1<<TWSTA)|(1<<TWEN))
 #define TWI_STOP ((1<<TWINT)|(1<<TWSTO)|(1<<TWEN))
