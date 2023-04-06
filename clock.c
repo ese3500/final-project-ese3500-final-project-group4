@@ -74,10 +74,28 @@ void ds1307_read_time(uint8_t* hour, uint8_t* minute, uint8_t* second) {
     twi_stop();
 }
 
+void ds1307_init() {
+    uint8_t hour, minute, second;
+    twi_start();
+    twi_write(DS1307_ADDR);
+    twi_write(0x00); // set register pointer to 0x00
+    twi_stop();
+    twi_start();
+    twi_write(DS1307_ADDR | 1); // read mode
+    second = twi_read_ack();
+    minute = twi_read_ack();
+    hour = twi_read_nack();
+    twi_stop();
+    if (hour == 0 && minute == 0 && second == 0) {
+        // RTC has not been set, set the time
+        ds1307_set_time(12, 30, 0);
+    }
+}
+
 int main() {
     UART_init(MYUBRR);
     twi_init();
-    ds1307_set_time(12, 30, 0);
+    ds1307_init();
     while (1) {
         uint8_t hour, minute, second;
         ds1307_read_time(&hour, &minute, &second);
