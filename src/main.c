@@ -65,6 +65,14 @@ void buzz(uint16_t frequency, uint16_t duration) {
     TCCR2B &= ~(1 << CS20); // Set prescaler to 0 to stop PWM
 }
 
+uint16_t read_ADC(uint8_t channel) {
+    ADMUX = (ADMUX & 0xF0) | (channel & 0x0F); // Select the ADC channel
+    ADCSRA |= (1 << ADSC); // Start the ADC conversion
+    while (ADCSRA & (1 << ADSC)); // Wait for the conversion to complete
+    return ADC; // Return the ADC value
+}
+
+
 uint8_t twi_start() {
     TWCR = TWI_START;
     TWI_WAIT;
@@ -222,13 +230,11 @@ void send_string(char* str) {
 }
 
 void init_ADC(void) {
-    ADMUX |= (1 << REFS0) | (1 << MUX0); // Set reference voltage to AVCC and select ADC1 (LDR_PIN should be 1 instead of 0)
-    ADCSRA |= (1 << ADEN)  // Enable ADC
-              |  (1 << ADPS0) // Set prescaler to 128 (16MHz / 128 = 125kHz)
-              |  (1 << ADPS1)
-              |  (1 << ADPS2);
-
-    ADCSRA |= (1 << ADSC); // Start the first ADC conversion
+    ADCSRA |= (1 << ADIE); // Enable ADC interrupt
+    ADMUX |= (1 << REFS0); // Set ADC reference voltage to AVCC
+    ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+    ADCSRA |= (1 << ADEN); // Enable ADC
+    ADCSRA |= (1 << ADSC);
 }
 
 /*
@@ -250,15 +256,15 @@ ISR(ADC_vect) {
 }
  */
 
-int main(void)
-{
+int main(void) {
     //EEPROM_ADDR=0 stores the stack pointer to the end of our food reference.
     //Each food block is three bytes, encoding
     //UART_init(BAUD_PRESCALER);
     init_USART();
+    init_ADC();
     reset_inventory();
-    food_pointer = eeprom_read_byte((uint8_t *)0x0);
-    if (food_pointer==0){
+    food_pointer = eeprom_read_byte((uint8_t *) 0x0);
+    if (food_pointer == 0) {
         food_pointer++;
     }
     twi_init();
@@ -274,33 +280,30 @@ int main(void)
     USART_Transmit('\r');
     USART_Transmit('\n');
     cli();
-    init_ADC();
-    sei(); // Enable global interrupts
     DDRB &= ~(1 << PHOTO_PIN); // set photoresistor pin as input
     PORTB |= (1 << PHOTO_PIN); // enable pull-up resistor
     while (1) {
         poll_expirations();
 
         ADCSRA |= (1 << ADSC); // Start an ADC conversion
-        while (ADCSRA & (1 << ADSC)); // Wait for the ADC conversion to complete
-
-        uint16_t ldr_value = ADC; // Read the digital value of the LDR
-
-        if (ldr_value < LDR_THRESHOLD) { // Check if the LDR value is below the threshold
-            if (state == 0) { // If the fridge was previously open
-                send_string("Fridge is closed.\n");
-                state = 1;
+        while (1) {
+            uint16_t ldr_value = read_ADC(LDR_PIN); // Read the LDR value
+            if (ldr_value < LDR_THRESHOLD) { // Check if the LDR value is below the threshold
+                if (state == 0) { // If the fridge was previously open
+                    send_string("Fridge is closed.\n");
+                    state = 1;
+                }
+            } else { // If the LDR value is above the threshold
+                if (state == 1) { // If the fridge was previously closed
+                    send_string("Fridge is open.\n");
+                    state = 0;
+                }
             }
-        } else { // If the LDR value is above the threshold
-            if (state == 1) { // If the fridge was previously closed
-                send_string("Fridge is open.\n");
-                state = 0;
-            }
+
+            poll_expirations();
+            _delay_ms(100); // Adjust this delay according to your needs
         }
 
-        _delay_ms(100);
+        return 0;
     }
-
-    return 0;
 }
-
