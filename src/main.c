@@ -262,13 +262,23 @@ int main(void) {
     //UART_init(BAUD_PRESCALER);
     init_USART();
     init_ADC();
+    USART_Transmit('H');
+    USART_Transmit('e');
+    USART_Transmit('l');
+    USART_Transmit('l');
+    USART_Transmit('o');
+    USART_Transmit('1');
+    USART_Transmit('\r');
+    USART_Transmit('\n');
     reset_inventory();
     food_pointer = eeprom_read_byte((uint8_t *) 0x0);
     if (food_pointer == 0) {
         food_pointer++;
     }
+    USART_Transmit('o');
     twi_init();
     ds1307_init();
+    USART_Transmit('o');
     store_food(1);
     store_food(2);
     store_food(3);
@@ -277,6 +287,7 @@ int main(void) {
     USART_Transmit('l');
     USART_Transmit('l');
     USART_Transmit('o');
+    USART_Transmit('2');
     USART_Transmit('\r');
     USART_Transmit('\n');
     cli();
