@@ -1,0 +1,5 @@
+/Users/mherbert/Desktop/untitled1/cmake-build-nanoatmega328new/CMakeFiles/Production.dir
+/Users/mherbert/Desktop/untitled1/cmake-build-nanoatmega328new/CMakeFiles/Debug.dir
+/Users/mherbert/Desktop/untitled1/cmake-build-nanoatmega328new/CMakeFiles/Z_DUMMY_TARGET.dir
+/Users/mherbert/Desktop/untitled1/cmake-build-nanoatmega328new/CMakeFiles/edit_cache.dir
+/Users/mherbert/Desktop/untitled1/cmake-build-nanoatmega328new/CMakeFiles/rebuild_cache.dir

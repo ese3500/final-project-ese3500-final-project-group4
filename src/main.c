@@ -237,24 +237,6 @@ void init_ADC(void) {
     ADCSRA |= (1 << ADSC);
 }
 
-/*
-ISR(ADC_vect) {
-    uint16_t ldr_value = ADC; // Read the digital value of the LDR
-    //send_LDR_value(ldr_value);
-    if (ldr_value < LDR_THRESHOLD) { // Check if the LDR value is below the threshold
-        if (state == 0) { // If the fridge was previously open
-            send_string("Fridge is closed.\n");
-            state = 1;
-        }
-    } else { // If the LDR value is above the threshold
-        if (state == 1) { // If the fridge was previously closed
-            send_string("Fridge is open.\n");
-            state = 0;
-        }
-    }
-    ADCSRA |= (1 << ADSC);
-}
- */
 
 int main(void) {
     //EEPROM_ADDR=0 stores the stack pointer to the end of our food reference.
@@ -290,12 +272,12 @@ int main(void) {
     USART_Transmit('2');
     USART_Transmit('\r');
     USART_Transmit('\n');
-    cli();
+    //cli();
     DDRB &= ~(1 << PHOTO_PIN); // set photoresistor pin as input
     PORTB |= (1 << PHOTO_PIN); // enable pull-up resistor
     while (1) {
         poll_expirations();
-
+        USART_Transmit('hi');
         ADCSRA |= (1 << ADSC); // Start an ADC conversion
         while (1) {
             uint16_t ldr_value = read_ADC(LDR_PIN); // Read the LDR value
@@ -310,7 +292,6 @@ int main(void) {
                     state = 0;
                 }
             }
-
             poll_expirations();
             _delay_ms(100); // Adjust this delay according to your needs
         }
